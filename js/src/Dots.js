@@ -111,13 +111,70 @@ Dots.prototype.atualizaMalha = function(){
 
 Dots.prototype.jogadorJoga = function(_jogada_pessoa){
 	dots.jogadas_pessoa.push(_jogada_pessoa);
+	var orientacao = dots.orientacao(_jogada_pessoa);
+	var linhas = dots.yQuadrado(_jogada_pessoa, orientacao);
+	var colunas = dots.xQuadrado(_jogada_pessoa, orientacao);
 	dots.atualizaMalha();
 }
 
 Dots.prototype.agenteJoga = function(){
 	var jogada_computador = dots.agente.jogadaComputador( new Malha(dots.numeroLinhas, dots.numeroColunas, dots.jogadas_computador, dots.jogadas_pessoa) );
 	dots.jogadas_computador.push(jogada_computador);
+	var orientacao = dots.orientacao(jogada_computador);
+	var linhas = dots.yQuadrado(jogada_computador, orientacao);
+	var colunas = dots.xQuadrado(jogada_computador, orientacao);
 	dots.atualizaMalha();
+}
+
+// retorna a(s) coordenada(s) x do(s) quadrado(s)
+Dots.prototype.xQuadrado = function(_jogada, _orientacao){
+	var colunas = Array();
+	if (_orientacao == 0){
+		var coluna = (_jogada-1)%(2*dots.numeroColunas-1);
+		colunas.push(coluna);
+	}
+	if (_orientacao == 1){
+		var colunaEsq = ((_jogada-1)%(2*dots.numeroColunas-1))-dots.numeroColunas;
+		var colunaDir = colunaEsq+1;
+		if (colunaEsq >= 0){
+			colunas.push(colunaEsq);
+		}
+		if (colunaDir < dots.numeroColunas-1){
+			colunas.push(colunaDir);
+		}
+	}
+	return colunas;
+}
+
+// retorna a(s) coordenada(s) y do(s) quadrado(s)
+Dots.prototype.yQuadrado = function(_jogada, _orientacao){
+	var linhas = Array();
+	var linha = (_jogada-1)/(2*dots.numeroColunas-1);
+	linha = parseInt(linha, 10);
+	if (_orientacao == 0){
+		var linhaAcima = linha - 1;
+		if (linhaAcima >= 0){
+			linhas.push(linhaAcima)
+		}
+		if (linha < dots.numeroLinhas-1){
+			linhas.push(linha);
+		}
+	}
+	if (_orientacao == 1){
+		linhas.push(linha);
+	}
+	return linhas;
+}
+
+// [0] - horizontal / [1] - vertical
+Dots.prototype.orientacao = function(_jogada){
+	var orientacao = ((_jogada-1)%(2*dots.numeroColunas-1));
+	if (orientacao < (dots.numeroColunas-1)){
+		return 0;
+	}
+	else{
+		return 1;
+	}
 }
 
 $(document).ready(function(){
