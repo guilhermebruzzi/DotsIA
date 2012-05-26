@@ -1,0 +1,66 @@
+body{
+	width: 100%;
+	height: 100%;
+}
+
+/* Variáveis */
+@tam_bola: 16px;
+@tam_linha: 40px;
+@espessura_linha: 8px;
+@cor_vertice: rgb(10, 10, 10);
+@cor_linha_nao_marcada: rgb(240,240,240);
+@cor_linha_hover: rgb(50,50,50);
+@cor_linha_marcado: rgb(200,0,50);
+
+
+#malha{
+	border: 1px solid black;
+	width: 800px;
+	height: 600px;
+}
+
+.linha-horizontal, .linha-vertical, .vertice {
+	float:left;
+}
+
+.linha-horizontal{
+	background-color: @cor_linha_nao_marcada;
+	width: @tam_linha;
+	height: @espessura_linha;
+	margin-top: (@tam_bola - @espessura_linha) / 2;
+	&:hover{
+		background-color: @cor_linha_hover;
+	}
+}
+
+.linha-vertical{
+	background-color: @cor_linha_nao_marcada;
+	width: @espessura_linha;
+	height: @tam_linha;
+	margin-left: @tam_linha + (@tam_bola/2);
+	&:hover{
+		background-color: @cor_linha_hover;
+	}
+}
+
+.linha-vertical-first{
+	margin-left: (@tam_bola - @espessura_linha) / 2;
+	clear: left;
+}
+
+
+.vertice{
+	width: @tam_bola;
+	height: @tam_bola; 
+    -webkit-border-radius: @tam_bola;
+	-moz-border-radius: @tam_bola;
+	background-color: @cor_vertice;
+}
+
+.vertice-first{
+	clear: left;
+}
+
+.marcado{
+	background-color: @cor_linha_marcado;
+}
