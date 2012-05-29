@@ -29,13 +29,13 @@ Dots.prototype.getHtmlVertice = function(first){
 }
 
 Dots.prototype.getHtmlMalha = function(){
-	var html = "Malha " + this.tabuleiro.linhas + " x " + this.tabuleiro.colunas + " <br />";
-	//html += "Placar: pc " + this.tabuleiro.quadradosComputador.length + " x " + this.tabuleiro.quadradosJogador.length + " jogador<br />";
+	var html = "<p>Malha " + this.tabuleiro.linhas + " x " + this.tabuleiro.colunas + " <br />";
+	html += "Placar: pc " + this.tabuleiro.quadradosComputador.length + " x " + this.tabuleiro.quadradosJogador.length + " jogador</p><br />";
 	var linha = 1;
 	for(var i = 0; i < this.tabuleiro.linhas; i++){
 		if(i > 0){
-			for(var j = 0; j < this.colunas; j++){
-				html += this.getHtmlLinhaVertical(j==0, linha, this.tabuleiro.arestaMarcada(linha));
+			for(var j = 0; j < this.tabuleiro.colunas; j++){
+				html += this.getHtmlLinhaVertical(j==0, linha, this.tabuleiro.arestaMarcada(linha-1));
 				linha++;
 			}		
 		}
@@ -44,7 +44,7 @@ Dots.prototype.getHtmlMalha = function(){
 				html += this.getHtmlVertice(true);
 			}
 			else{
-				html += this.getHtmlLinhaHorizontal(linha, this.tabuleiro.arestaMarcada(linha));
+				html += this.getHtmlLinhaHorizontal(linha, this.tabuleiro.arestaMarcada(linha-1));
 				linha++;
 				html += this.getHtmlVertice(false);
 			}
@@ -58,6 +58,7 @@ Dots.prototype.atualizaMalha = function(){
 }
 
 Dots.prototype.jogadorJoga = function(jogadaPessoa){
+    jogadaPessoa--;
 	this.tabuleiro.marcaArestas(jogadaPessoa, "jogador");
 	this.atualizaMalha();
 }
@@ -71,10 +72,32 @@ Dots.prototype.agenteJoga = function(){
 $(document).ready(function(){
 
 	$("#gerar").click(function(){
-		dots = new Dots($("#numeroLinhas").val(), $("#numeroColunas").val());
+	    var _linhas = parseInt($("#numeroLinhas").val(), 10);
+	    var _colunas = parseInt($("#numeroColunas").val(), 10);
+	    var erro = false;
+	    if(isNaN(_linhas) || _linhas < 2){
+	        $("#erroLinhas").html("É necessário um número menor de 2");
+	        erro = true;
+	    }
+	    if(isNaN(_colunas) || _colunas < 2){
+	        $("#erroColunas").html("É necessário um número menor de 2");
+	        erro = true;
+	    }
+	    if(erro){
+	        return;
+	    }
+	    else{
+	        $(".erro").html("");
+	    }
+	    
+		dots = new Dots(_linhas, _colunas);
 		var euComeco = document.getElementById('comeca').checked;
 		if (euComeco==0){
+		    vez = "computador";
 			dots.agenteJoga();
+		}
+		else{
+		    vez = "jogador";
 		}
 		dots.atualizaMalha();
 	});
@@ -82,8 +105,12 @@ $(document).ready(function(){
 	$(document).on("click", ".linha-vertical, .linha-horizontal", function(){
 		$(this).addClass("marcado");
 		var jogada_pessoa = parseInt($(this).attr("data-indice"), 10); // Base 10
-		dots.jogadorJoga(jogada_pessoa);
-		dots.agenteJoga();
+		if(vez == "jogador"){
+		    dots.jogadorJoga(jogada_pessoa);
+		}
+		if(vez == "computador"){
+		    dots.agenteJoga();
+		}
 	});
 
 });

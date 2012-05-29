@@ -2,21 +2,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br">
 	<head>
 		<title>JOGO DOS PONTINHOS</title>
+        <meta http-equiv='Content-Type' content='Type=text/html; charset=utf-8'>
+		<script type="text/javascript" src="js/lib/jquery-1.7.2.min.js"></script>
 		<link rel="stylesheet/less" type="text/css" href="css/Dots.less">
 		<script src="js/lib/less-1.3.0.min.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<div id="menu">
-			<p>Numero de linhas: <input type="input" id="numeroLinhas" /></p>
-			<p>Numero de colunas: <input type="input" id="numeroColunas" /></p>
-			<p><input type="radio" name="comeca" id="comeca" value="eu" checked="checked"> Eu Começo<br />
-			<input type="radio" name="comeca" id="comeca" value="agente"> Computador Começa</p>
+			<p>Numero de linhas: <input type="input" id="numeroLinhas" /></p> <small id="erroLinhas" class="erro"></small>
+			<p>Numero de colunas: <input type="input" id="numeroColunas" /></p> <small id="erroColunas" class="erro"></small>
+			<p><input type="radio" name="comeca" id="comeca" value="eu" checked="checked"> Eu Comeco<br />
+			<input type="radio" name="comeca" id="comeca" value="agente"> Computador Comeca</p>
 			<p><input type="button" id="gerar" value="Gerar" /></p>
 		</div>
 		<div id="malha">
 		</div>
 		
-		<script type="text/javascript" src="js/lib/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="js/src/Tabuleiro.js"></script>
 		<script type="text/javascript" src="js/src/Agente.js"></script>
 		<script type="text/javascript" src="js/src/Dots.js"></script>
