@@ -124,10 +124,16 @@ Tabuleiro.prototype.addQuadradosComputador = function(novosQuadrados){
     this.marca(this.quadradosComputador, novosQuadrados);
 }
 
+/**
+ * Retorna uma lista de duplas que definem os quadrados que tem a aresta parametro em sua formacao. 
+ */
 Tabuleiro.prototype.getArestaQuadrados = function(aresta){ // getArestaQuadrados(1) [ [1,2], [2,1] ]
     return this.mapa_arestas_quadrados[aresta];    
 }
 
+/**
+ * Retorna uma lista das arestas marcadas que formam o quadrado (cordX, cordY) 
+ */
 Tabuleiro.prototype.getQuadradoArestas = function(cordX, cordY){ // getQuadradoArestas(2,1) -> retornar [0,6,7,13]
     return this.mapa_quadrados_arestas[chave_quadrado([cordX, cordY])];
 }
@@ -159,4 +165,26 @@ Tabuleiro.prototype.temMarcarQuartaLinha = function(){
 		}
 	}
 	return 0;
+}
+
+/**
+ * retorna 1 se é possivel em algum lugar do tabuleiro marcar uma linha
+ *  que seja a terceira linha de um dos quadrados que essa linha influencia, 
+ *  retornar 0 caso contrario. 
+ */
+Tabuleiro.prototype.temMarcarTerceiraLinha = function(){
+    for (var i=0;i<this.linhas;i++){
+        for (var j=0;j<this.colunas;j++){            
+            var arestas = this.getQuadradoArestas(j, i);            
+            var countPreenchido = 0;
+            for(aresta_index in arestas){
+                var aresta = arestas[aresta_index];
+                if(this.arestaMarcada(aresta)){
+                    countPreenchido++;
+                }
+            }
+            if (countPreenchido == 2){ return 1; }
+        }
+    }
+    return 0;
 }
