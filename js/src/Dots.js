@@ -108,7 +108,7 @@ $(document).ready(function(){
 		if(vez == "jogador"){
 		    dots.jogadorJoga(jogada_pessoa);
 		}
-		if(vez == "computador"){
+		while(vez == "computador"){
 		    dots.agenteJoga();
 		}
 	});

@@ -93,8 +93,7 @@ Tabuleiro.prototype.marcaArestas = function(arestas, player){ // marcaAresta([1,
         if(quadrados.length > 0){ // Continuar com uma aresta aleatória
             if(player == "computador"){
                 this.addQuadradosComputador(quadrados);
-                arestas.push(Math.floor((Math.random()*(this.linhas * this.colunas))));
-    		    vez = "computador";
+				return; // Computador continua a jogar
             }
             else{
                 this.addQuadradosJogador(quadrados);
