@@ -65,6 +65,10 @@ Dots.prototype.jogadorJoga = function(jogadaPessoa){
 
 Dots.prototype.agenteJoga = function(){
 	var jogadaComputador = this.agente.jogadaComputador(this.tabuleiro.clone());
+	if (jogadaComputador == -1){
+		vez = "jogador";
+		return;
+	}
 	this.tabuleiro.marcaArestas(jogadaComputador, "computador");
 	this.atualizaMalha();
 }

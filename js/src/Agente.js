@@ -13,5 +13,5 @@ Agente.prototype.jogadaComputador = function(tabuleiro){
 	        }
 	    }
 	}
-	return 1;
+	return -1;
 }	
