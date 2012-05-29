@@ -144,3 +144,19 @@ Tabuleiro.prototype.quadradoEstaCompleto = function(cordX, cordY){
     return (countPreenchido == 4);
 }
 
+Tabuleiro.prototype.temMarcarQuartaLinha = function(){
+	for (var i=0;i<this.linhas;i++){
+		for (var j=0;j<this.colunas;j++){
+			var arestas = this.getQuadradoArestas(j, i);
+			var countPreenchido = 0;
+			for(aresta_index in arestas){
+				var aresta = arestas[aresta_index];
+				if(this.arestaMarcada(aresta)){
+					countPreenchido++;
+				}
+			}
+			if (countPreenchido == 3){ return 1; }
+		}
+	}
+	return 0;
+}
