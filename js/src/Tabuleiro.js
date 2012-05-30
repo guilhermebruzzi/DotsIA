@@ -236,3 +236,28 @@ Tabuleiro.prototype.temMarcarPrimeiraOuSegundaLinha = function() {
     }    
     return (countPrimeiraOuSegunda>0);
 }
+
+/**
+* Marca terceira linha no quadrado que foi passado por parametro em qualquer uma das 2 arestas que sao possiveis
+* @return Retorna true se conseguiu marcar uma terceira linha do quadrado parametro.
+ */
+Tabuleiro.prototype.marcaTerceiraLinha = function(cordX, cordY, player) {
+    var arestas = this.getQuadradoArestas(cordX, cordY);
+    var countPreenchido = 0;
+    var marcarEstaAresta;
+    for(aresta_index in arestas){
+        var aresta = arestas[aresta_index];
+        if(this.arestaMarcada(aresta)){
+            countPreenchido++;            
+        } else {
+            marcarEstaAresta = aresta;
+        }
+    }
+    if (countPreenchido==2) {
+        this.marcaArestas(marcarEstaAresta,player);
+        return true;        
+    }
+    return false;
+}
+
+
