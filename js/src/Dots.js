@@ -61,7 +61,6 @@ Dots.prototype.jogadorJoga = function(jogadaPessoa){
     jogadaPessoa--;
 	this.tabuleiro.marcaArestas(jogadaPessoa, "jogador");
 	this.atualizaMalha();
-	this.tabuleiro.getQuadradoMenorTubo();
 }
 
 Dots.prototype.agenteJoga = function(){

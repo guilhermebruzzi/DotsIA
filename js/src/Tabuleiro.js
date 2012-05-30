@@ -248,6 +248,7 @@ Tabuleiro.prototype.getQuadradoMenorTubo = function(){
 	
 	//inicializa tamanho minimo com infinito
 	tamanhoMinimo = Number.MAX_VALUE;
+	quadradoMinimo = ["", ""];
 	
 	//percorre todos os quadrados
 	for (var i=0;i<this.linhas-1;i++){
@@ -255,6 +256,7 @@ Tabuleiro.prototype.getQuadradoMenorTubo = function(){
 			// se o quadrado ja foi visitado, seguimos para o proximo quadrado
 			if (visitado[i][j]==1){ continue; }
 			// guardamos coordenada inicial que começamos a percorrer o tubo
+			quadrado = [j, i];
 			coordenadaInicial = [i, j];
 			// coordenadas do quadrado atual
 			var lin = i;
@@ -342,10 +344,11 @@ Tabuleiro.prototype.getQuadradoMenorTubo = function(){
 			}
 			if (tamanhoTemp < tamanhoMinimo){
 				tamanhoMinimo = tamanhoTemp;
+				quadradoMinimo = quadrado;
 			}
 		}
 	}
-	alert("tamanhoMinimo: "+tamanhoMinimo);
+	return [quadradoMinimo, tamanhoMinimo];
 }
 
 /**
