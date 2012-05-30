@@ -1,9 +1,9 @@
 describe("HTML na tela", function() {
 	  beforeEach(function() {
-		_dots = new Dots();
-		_linhas = 5;
-		_colunas = 7;
-		_html = _dots.retornaHTMLMalha(5, 7);
+        _linhas = 5;
+        _colunas = 7;
+        _dots = new Dots(_linhas, _colunas);
+        _html = _dots.getHtmlMalha();
 	  });
 
 	it("Não está vazio", function() {
@@ -12,7 +12,6 @@ describe("HTML na tela", function() {
 
 	it("Testa cabecalho da malha", function() {
 		var texto = _linhas + " x " + _colunas;
-		"Placar: pc " + placar_pc + " x " + placar_jogador + " jogador</p><br />";
 		var placar = _dots.tabuleiro.quadradosComputador.length  + " x " + _dots.tabuleiro.quadradosJogador.length;
 		expect(_html).toContain(texto);
 		expect(_html).toContain(placar);
