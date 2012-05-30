@@ -156,8 +156,8 @@ Tabuleiro.prototype.quadradoEstaCompleto = function(cordX, cordY){
  *  retornar false caso contrario. 
  */
 Tabuleiro.prototype.temMarcarQuartaLinha = function(){
-	for (var i=0;i<this.linhas-1;i++){
-		for (var j=0;j<this.colunas-1;j++){
+	for (var i=0;i<this.linhasQuadrados;i++){
+		for (var j=0;j<this.colunasQuadrados;j++){
 			var arestas = this.getQuadradoArestas(j, i);
 			var countPreenchido = 0;
 			for(aresta_index in arestas){
@@ -178,8 +178,8 @@ Tabuleiro.prototype.temMarcarQuartaLinha = function(){
  *  retornar 0 caso contrario. 
  */
 Tabuleiro.prototype.temMarcarTerceiraLinha = function(){
-    for (var i=0;i<this.linhas-1;i++){
-        for (var j=0;j<this.colunas-1;j++){            
+    for (var i=0;i<this.linhasQuadrados;i++){
+        for (var j=0;j<this.colunasQuadrados;j++){            
             var arestas = this.getQuadradoArestas(j, i);            
             var countPreenchido = 0;
             for(aresta_index in arestas){
@@ -219,8 +219,8 @@ Tabuleiro.prototype.podeFechar = function(cordX, cordY) {
  */
 Tabuleiro.prototype.temMarcarPrimeiraOuSegundaLinha = function() {
     var countPrimeiraOuSegunda = 0;
-    for (var i=0;i<this.linhas-1;i++){
-        for (var j=0;j<this.colunas-1;j++){            
+    for (var i=0;i<this.linhasQuadrados;i++){
+        for (var j=0;j<this.colunasQuadrados;j++){            
             var arestas = this.getQuadradoArestas(j, i);            
             var countPreenchido = 0;
             for(aresta_index in arestas){
