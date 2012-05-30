@@ -125,14 +125,14 @@ Tabuleiro.prototype.addQuadradosComputador = function(novosQuadrados){
 }
 
 /**
- * Retorna uma lista de duplas que definem os quadrados que tem a aresta parametro em sua formacao. 
+ * @return Retorna uma lista de duplas que definem os quadrados que tem a aresta parametro em sua formacao. 
  */
 Tabuleiro.prototype.getArestaQuadrados = function(aresta){ // getArestaQuadrados(1) [ [1,2], [2,1] ]
     return this.mapa_arestas_quadrados[aresta];    
 }
 
 /**
- * Retorna uma lista das arestas marcadas que formam o quadrado (cordX, cordY) 
+ * @return Retorna uma lista das arestas marcadas que formam o quadrado (cordX, cordY) 
  */
 Tabuleiro.prototype.getQuadradoArestas = function(cordX, cordY){ // getQuadradoArestas(2,1) -> retornar [0,6,7,13]
     return this.mapa_quadrados_arestas[chave_quadrado([cordX, cordY])];
@@ -156,8 +156,8 @@ Tabuleiro.prototype.quadradoEstaCompleto = function(cordX, cordY){
  *  retornar false caso contrario. 
  */
 Tabuleiro.prototype.temMarcarQuartaLinha = function(){
-	for (var i=0;i<this.linhas;i++){
-		for (var j=0;j<this.colunas;j++){
+	for (var i=0;i<this.linhas-1;i++){
+		for (var j=0;j<this.colunas-1;j++){
 			var arestas = this.getQuadradoArestas(j, i);
 			var countPreenchido = 0;
 			for(aresta_index in arestas){
@@ -178,8 +178,8 @@ Tabuleiro.prototype.temMarcarQuartaLinha = function(){
  *  retornar 0 caso contrario. 
  */
 Tabuleiro.prototype.temMarcarTerceiraLinha = function(){
-    for (var i=0;i<this.linhas;i++){
-        for (var j=0;j<this.colunas;j++){            
+    for (var i=0;i<this.linhas-1;i++){
+        for (var j=0;j<this.colunas-1;j++){            
             var arestas = this.getQuadradoArestas(j, i);            
             var countPreenchido = 0;
             for(aresta_index in arestas){
@@ -195,9 +195,9 @@ Tabuleiro.prototype.temMarcarTerceiraLinha = function(){
 }
 
 /**
- * @param cordX Coordenada x do quadrado Adjacente
- * @param cordY Coordenada y do quadrado Adjacente
- * @return Retorna true se o quadrado adjacente pode ser fechado com apenas mais uma linha, 
+ * @param cordX Coordenada x de um quadrado
+ * @param cordY Coordenada y de um quadrado
+ * @return Retorna true se o quadrado sera fechado com apenas mais uma linha, 
  * retornar false caso contrario. 
  * O parametro passado pode valer null, nesse caso retornar false.
  */
@@ -212,3 +212,27 @@ Tabuleiro.prototype.podeFechar = function(cordX, cordY) {
     }
     return (countPreenchido == 3);    
 } 
+
+/**
+ * @return Retorna true se é possivel em algum lugar do tabuleiro marcar uma linha que 
+ * seja a primeira ou segunda linha dos quadrados que essa linha influencia, retornar false caso contrario. 
+ */
+Tabuleiro.prototype.temMarcarPrimeiraOuSegundaLinha = function() {
+    var countPrimeiraOuSegunda = 0;
+    for (var i=0;i<this.linhas-1;i++){
+        for (var j=0;j<this.colunas-1;j++){            
+            var arestas = this.getQuadradoArestas(j, i);            
+            var countPreenchido = 0;
+            for(aresta_index in arestas){
+                var aresta = arestas[aresta_index];
+                if(this.arestaMarcada(aresta)){
+                    countPreenchido++;
+                }
+            }            
+            if (countPreenchido <= 1) {
+                countPrimeiraOuSegunda++;                
+            }         
+        }
+    }    
+    return (countPrimeiraOuSegunda>0);
+}
