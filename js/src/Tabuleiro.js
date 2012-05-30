@@ -276,6 +276,9 @@ Tabuleiro.prototype.getQuadradoMenorTubo = function(){
 	var tamanhoMenorTubo = Number.MAX_VALUE;
     for (var i=0;i<this.linhasQuadrados;i++){
         for (var j=0;j<this.colunasQuadrados;j++){ 
+			if (this.quadradoEstaCompleto(j,i)){
+				continue;
+			}
 			var quadradoTemp = [j,i];
 			var tamanhoTemp = 0;
 			var arestasDesmarcadas = Array();
