@@ -114,8 +114,8 @@ $(document).ready(function(){
 		    dots.jogadorJoga(jogada_pessoa);
 		}
 		while(vez == "computador"){
-		    //dots.agenteJoga();
-			vez = "jogador";
+		    dots.agenteJoga();
+			//vez = "jogador";
 		}
 	});
 
