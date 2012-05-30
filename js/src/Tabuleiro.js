@@ -57,7 +57,29 @@ function Tabuleiro(_linhas, _colunas, _marcadas, _quadradosJogador, _quadradosCo
 }
 
 Tabuleiro.prototype.clone = function(){
-    return new Tabuleiro(this.linhas, this.colunas, this.marcadas, this.quadradosJogador, this.quadradosComputador, this.mapa_arestas_quadrados);
+	var vetorQuadradosJogador = [];
+	for (var quadrado in this.quadradosJogador){
+		quadrado = this.quadradosJogador[quadrado];
+		vetorQuadradosJogador.push(quadrado);
+	}
+	var vetorQuadradosAgente = [];
+	for (var quadrado in this.quadradosComputador){
+		quadrado = this.quadradosAgente[quadrado];
+		vetorQuadradosAgente.push(quadrado);
+	}
+	var vetorMarcadas = [];
+	for (var aresta in this.marcadas){
+		aresta = this.marcadas[aresta];
+		vetorMarcadas.push(aresta);
+	}
+	var copy = {};
+	for (var attr in this.mapa_arestas_quadrados){
+		if (this.mapa_arestas_quadrados.hasOwnProperty(attr)){
+			copy[attr] = this.mapa_arestas_quadrados[attr];
+		}
+	}
+	console.log(this.mapa_arestas_quadrados, copy);
+    return new Tabuleiro(this.linhas, this.colunas, vetorMarcadas, vetorQuadradosJogador, vetorQuadradosAgente, copy);
 }
 
 Tabuleiro.prototype.arestaMarcada = function(aresta){ // arestaMarcada(2) -> true ou false
@@ -247,118 +269,65 @@ Tabuleiro.prototype.temMarcarPrimeiraOuSegundaLinha = function() {
     return (countPrimeiraOuSegunda>0);
 }
 
-Tabuleiro.prototype.getQuadradoMenorTubo = function(){
-	var visitado = new Array(this.linhas-1);
-	for (var i=0;i<this.linhas-1;i++){
-		visitado[i] = new Array(this.colunas-1);
-		for (var j=0;j<this.colunas-1;j++){
-			visitado[i][j] = 0;
-		}
-	}
-	
-	//inicializa tamanho minimo com infinito
-	tamanhoMinimo = Number.MAX_VALUE;
-	quadradoMinimo = ["", ""];
-	
-	//percorre todos os quadrados
-	for (var i=0;i<this.linhas-1;i++){
-		for (var j=0;j<this.colunas-1;j++){
-			// se o quadrado ja foi visitado, seguimos para o proximo quadrado
-			if (visitado[i][j]==1){ continue; }
-			// guardamos coordenada inicial que começamos a percorrer o tubo
-			quadrado = [j, i];
-			coordenadaInicial = [i, j];
-			// coordenadas do quadrado atual
-			var lin = i;
-			var col = j;
-			// tamanho do tubo ate agora
-			tamanhoTemp = 0;
-			// quadradoMenorTubo
-			quadrado = null;
-			// enquanto nao caio em um quadrado que nao foi visitado continuo percorrendo no tubo
-			while(visitado[lin][col]==0){
-				// marco o quadrado atual
-				visitado[lin][col]=1;
-				// contabilizo o quadrado atual como mais um quadrado do tubo atual
-				tamanhoTemp++;
-				// pego todas as arestas do quadrado atual
-				arestasQuadradoAtual = this.getQuadradoArestas(col, lin);
-				// variavel que guarda o numero de arestas nao marcadas do quadrado atual ja analisadas
-				var cont = 0
-				for (aresta in arestasQuadradoAtual){
-					// pega uma das 4 arestas do quadrado
-					var aresta = arestasQuadradoAtual[aresta];
-					// se essa aresta nao esta marcada
-					if (!this.arestaMarcada(aresta)){
-						// contabilizo a aresta
-						cont++;
-						// pego os quadrados da aresta atual
-						var quadrados = this.getArestaQuadrados(aresta);
-						// se temos 2 quadrados nessa aresta, entao uma delas nos levará ao proximo quadrado
-						if (quadrados.length == 2){
-							// pego o primeiro quadrado
-							var quadrado = quadrados[0];
-							// se o quadrado for diferente do quadrado que estou, entao me modifico para esse novo quadrado
-							if ((quadrado[0] != col || quadrado[1] != lin) && (!visitado[quadrado[1]][quadrado[0]])){
-								col = quadrado[0];
-								lin = quadrado[1];
-							}
-							// se nao for, me modifico para esse segundo quadrado
-							else{
-								var quadrado = quadrados[1];
-								if ((!visitado[quadrado[1]][quadrado[0]])){
-									col = quadrado[0];
-									lin = quadrado[1];
-								}
-							}
+Tabuleiro.prototype.getQuadradoMenorTubo = function(){	
+	var tabuleiroTemp = this.clone();
+	tabuleiroTemp.marcaTerceiraLinha(0,0,"jogador");
+	var quadradoDoMenorTubo;
+	var tamanhoMenorTubo = Number.MAX_VALUE;
+    for (var i=0;i<this.linhasQuadrados;i++){
+        for (var j=0;j<this.colunasQuadrados;j++){ 
+			var quadradoTemp = [j,i];
+			var tamanhoTemp = 0;
+			var arestasDesmarcadas = Array();
+			var arestas = this.getQuadradoArestas(j,i);
+			for (var aresta in arestas){
+				aresta = arestas[aresta];
+				if (!this.arestaMarcada(aresta)){
+					arestasDesmarcadas.push(aresta);
+				}
+			}
+			var tabuleiroTemp = this.clone();
+			if (arestasDesmarcadas.length == 2){
+				tabuleiroTemp.marcaTerceiraLinha(j,i,"jogador");
+				while(tabuleiroTemp.temMarcarQuartaLinha()){
+					var quadradoInfluenciado = tabuleiroTemp.marcaQualquerQuartaLinha("jogador");
+					if (quadradoInfluenciado.length == 2){
+						if (tabuleiroTemp.quadradoEstaCompleto(quadradoInfluenciado[0], quadradoInfluenciado[1])){
+							tamanhoTemp++;
 						}
 					}
+					tamanhoTemp++;
 				}
-				// se cont assumir valor diferente de 2 gera erro
-				if (cont != 2){
-					return "ERRO, AINDA TEMOS NO TABULEIROS QUADRADOS QUE NAO PERTENCEM A TUBOS, OU POSIÇÕES QUE PODIAM TER SIDO FECHADAS";
-				}
-				if (visitado[lin][col]==1){
-					lin = coordenadaInicial[0];
-					col = coordenadaInicial[1];
-					// pego todas as arestas do quadrado atual
-					arestasQuadradoAtual = this.getQuadradoArestas(col, lin);
-					for (aresta in arestasQuadradoAtual){
-						// pega uma das 4 arestas do quadrado
-						var aresta = arestasQuadradoAtual[aresta];
-						// se essa aresta nao esta marcada
-						if (!this.arestaMarcada(aresta)){
-							// pego os quadrados da aresta atual
-							var quadrados = this.getArestaQuadrados(aresta);
-							// se temos 2 quadrados nessa aresta, entao uma delas nos levará ao proximo quadrado
-							if (quadrados.length == 2){
-								// pego o primeiro quadrado
-								var quadrado = quadrados[0];
-								// se o quadrado for diferente do quadrado que estou, entao me modifico para esse novo quadrado
-								if ((quadrado[0] != col || quadrado[1] != lin) && (!visitado[quadrado[1]][quadrado[0]])){
-									col = quadrado[0];
-									lin = quadrado[1];
-								}
-								// se nao for, me modifico para esse segundo quadrado
-								else{
-									var quadrado = quadrados[1];
-									if ((!visitado[quadrado[1]][quadrado[0]])){
-										col = quadrado[0];
-										lin = quadrado[1];
-									}
-								}
+			}
+			if (arestasDesmarcadas.length > 2){
+				for (var aresta in arestasDesmarcadas) {
+					aresta = arestasDesmarcadas[aresta];
+					var tabuleiroArestaTemp = tabuleiroTemp.clone();
+					tabuleiroArestaTemp.marcaArestas(aresta, "jogador");
+					tabuleiroArestaTemp.marcaTerceiraLinha(j,i,"jogador");
+					tamanhoTemp=0;
+					while(tabuleiroArestaTemp.temMarcarQuartaLinha()){
+						var quadradoInfluenciado = tabuleiroArestaTemp.marcaQualquerQuartaLinha("jogador");
+						if (quadradoInfluenciado.length == 2){
+							if (tabuleiroArestaTemp.quadradoEstaCompleto(quadradoInfluenciado[0], quadradoInfluenciado[1])){
+								tamanhoTemp++;
 							}
 						}
+						tamanhoTemp++;
+					}
+					if (tamanhoTemp < tamanhoMenorTubo){
+						tamanhoMenorTubo = tamanhoTemp;
+						quadradoDoMenorTubo = quadradoTemp;
 					}
 				}
 			}
-			if (tamanhoTemp < tamanhoMinimo){
-				tamanhoMinimo = tamanhoTemp;
-				quadradoMinimo = quadrado;
+			if (tamanhoTemp < tamanhoMenorTubo){
+				tamanhoMenorTubo = tamanhoTemp;
+				quadradoDoMenorTubo = quadradoTemp;
 			}
 		}
 	}
-	return [quadradoMinimo, tamanhoMinimo];
+	return {quadradoMinimo: quadradoDoMenorTubo, tamanhoMinimo: tamanhoMenorTubo};
 }
 
 /**
