@@ -64,7 +64,7 @@ Tabuleiro.prototype.clone = function(){
 	}
 	var vetorQuadradosAgente = [];
 	for (var quadrado in this.quadradosComputador){
-		quadrado = this.quadradosAgente[quadrado];
+		quadrado = this.quadradosComputador[quadrado];
 		vetorQuadradosAgente.push(quadrado);
 	}
 	var vetorMarcadas = [];
