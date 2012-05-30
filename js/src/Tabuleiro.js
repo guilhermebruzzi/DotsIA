@@ -152,7 +152,7 @@ Tabuleiro.prototype.getArestaQuadrados = function(aresta){ // getArestaQuadrados
 }
 
 /**
- * @return Retorna uma lista das arestas marcadas que formam o quadrado (cordX, cordY) 
+ * @return Retorna uma lista das arestas que formam o quadrado (cordX, cordY) 
  */
 Tabuleiro.prototype.getQuadradoArestas = function(cordX, cordY){ // getQuadradoArestas(2,1) -> retornar [0,6,7,13]
     return this.mapa_quadrados_arestas[chave_quadrado([cordX, cordY])];
@@ -400,10 +400,39 @@ Tabuleiro.prototype.marcaTerceiraLinha = function(cordX, cordY, player) {
 /**
  * Marca no tabuleiro qualquer uma linha que seja a quarta linha de um quadrado.
  * @return Retorna o outro quadrado que essa linha tambem influencia. 
- * Caso essa linha nao influencie nenhum outro quadrado retorne null
+ * Caso essa linha nao influencie nenhum outro quadrado retorne []
  */
-Tabuleiro.prototype.marcaQualquerQuartaLinha = function() {
-    
+Tabuleiro.prototype.marcaQualquerQuartaLinha = function(player) {
+    var arestaAmarcar = undefined;
+    var quadradoFechado;
+    for (var i=0;i<this.linhasQuadrados;i++){
+        for (var j=0;j<this.colunasQuadrados;j++){            
+            var arestas = this.getQuadradoArestas(j, i);            
+            var countPreenchido = 0;
+            for(var aresta_index in arestas){
+                var aresta = arestas[aresta_index];
+                if(this.arestaMarcada(aresta)){
+                    countPreenchido++;
+                } else {
+                    quadradoFechado = [j,i];
+                    arestaAmarcar = aresta;
+                }
+            }   
+            if (countPreenchido == 3 && arestaAmarcar != undefined) {
+                this.marcaArestas(arestaAmarcar,player);         
+                var quadradosDaAresta = this.getArestaQuadrados(arestaAmarcar);
+                if (quadradosDaAresta.length > 1) {
+                    for (var i in quadradosDaAresta) {
+                        if (!isEqual(quadradosDaAresta[i],quadradoFechado)) {                                                        
+                            return quadradosDaAresta[i];  
+                        }
+                    }  
+                } else {
+                    return [];
+                }                               
+            }
+        }
+    }    
 }
  
 /**
