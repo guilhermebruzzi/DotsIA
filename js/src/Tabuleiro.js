@@ -150,6 +150,11 @@ Tabuleiro.prototype.quadradoEstaCompleto = function(cordX, cordY){
     return (countPreenchido == 4);
 }
 
+/**
+ * @return Retorna true se é possivel em algum lugar do tabuleiro marcar uma linha
+ *  que seja a quarta linha de um dos quadrados que essa linha influencia, 
+ *  retornar false caso contrario. 
+ */
 Tabuleiro.prototype.temMarcarQuartaLinha = function(){
 	for (var i=0;i<this.linhas;i++){
 		for (var j=0;j<this.colunas;j++){
@@ -161,14 +166,14 @@ Tabuleiro.prototype.temMarcarQuartaLinha = function(){
 					countPreenchido++;
 				}
 			}
-			if (countPreenchido == 3){ return 1; }
+			if (countPreenchido == 3){ return true; }
 		}
 	}
-	return 0;
+	return false;
 }
 
 /**
- * retorna 1 se é possivel em algum lugar do tabuleiro marcar uma linha
+ * @return Retorna 1 se é possivel em algum lugar do tabuleiro marcar uma linha
  *  que seja a terceira linha de um dos quadrados que essa linha influencia, 
  *  retornar 0 caso contrario. 
  */
@@ -183,8 +188,27 @@ Tabuleiro.prototype.temMarcarTerceiraLinha = function(){
                     countPreenchido++;
                 }
             }
-            if (countPreenchido == 2){ return 1; }
+            if (countPreenchido == 2){ return true; }
         }
     }
-    return 0;
+    return false;
 }
+
+/**
+ * @param cordX Coordenada x do quadrado Adjacente
+ * @param cordY Coordenada y do quadrado Adjacente
+ * @return Retorna true se o quadrado adjacente pode ser fechado com apenas mais uma linha, 
+ * retornar false caso contrario. 
+ * O parametro passado pode valer null, nesse caso retornar false.
+ */
+Tabuleiro.prototype.podeFechar = function(cordX, cordY) {
+    var arestas = this.getQuadradoArestas(cordX, cordY);
+    var countPreenchido = 0;
+    for(aresta_index in arestas){
+        var aresta = arestas[aresta_index];
+        if(this.arestaMarcada(aresta)){
+            countPreenchido++;
+        }
+    }
+    return (countPreenchido == 3);    
+} 
