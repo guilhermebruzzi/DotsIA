@@ -1,11 +1,6 @@
 vez = "jogador";
 
-function chave_quadrado(quadrado){
-    return "[" + quadrado[0] + "," + quadrado[1] + "]";
-}
-
-function associa_quadrado_arestas(mapa_quadrados_arestas, mapa_arestas_quadrados, quadrado, arestas){
-    mapa_quadrados_arestas[chave_quadrado(quadrado)] = arestas;
+function associa_quadrado_arestas(mapa_arestas_quadrados, quadrado, arestas){
     for (var aresta_index in arestas){
         var aresta = arestas[aresta_index];
         if(mapa_arestas_quadrados[aresta]){
@@ -18,9 +13,8 @@ function associa_quadrado_arestas(mapa_quadrados_arestas, mapa_arestas_quadrados
 }
 
 function cria_mapa_arestas_quadrados(_linhas, _colunas){
-    var pulo = (2 * _colunas) + 1,
-        mapa_quadrados_arestas = {},
-        mapa_arestas_quadrados = {};
+    var pulo = (2 * _colunas) + 1;
+    var mapa_arestas_quadrados = {};
 
     for(var y = 0; y < _linhas; y++){
 	    for(var x = 0; x < _colunas; x++){
@@ -30,11 +24,11 @@ function cria_mapa_arestas_quadrados(_linhas, _colunas){
 	        var aresta_baixo = pulo*(y+1) + x;
 	        var aresta_esq = pulo*y + x + _colunas;
 	        var arestas = [aresta_cima, aresta_dir, aresta_baixo, aresta_esq];
-	        associa_quadrado_arestas(mapa_quadrados_arestas, mapa_arestas_quadrados, quadrado, arestas);
+	        associa_quadrado_arestas(mapa_arestas_quadrados, quadrado, arestas);
 	    }
 	}
 	
-	return [mapa_quadrados_arestas, mapa_arestas_quadrados];
+	return mapa_arestas_quadrados;
 }
 
 function isEqual(v1,v2) {
@@ -45,18 +39,8 @@ function isEqual(v1,v2) {
     }
     return true;
 }
-/*
-Array.prototype.isEqual = function(v) {
-    var len = this.length;  
-    for (var i = 0; i < len; i++) {
-        if (this[i] != v[i])
-            return false;       
-    }
-    return true;
-}
-*/
 
-function Tabuleiro(_linhas, _colunas, _marcadas, _quadradosJogador, _quadradosComputador){
+function Tabuleiro(_linhas, _colunas, _marcadas, _quadradosJogador, _quadradosComputador, _mapa_arestas_quadrados){
 	this.linhas = _linhas;
 	this.colunas = _colunas;
 	this.linhasQuadrados = _linhas - 1;
@@ -69,13 +53,11 @@ function Tabuleiro(_linhas, _colunas, _marcadas, _quadradosJogador, _quadradosCo
 	this.quadradosComputador = 
 	    (typeof(_quadradosComputador) == "undefined" || _quadradosComputador == null) ? [] : _quadradosComputador;
 
-	var mapas = cria_mapa_arestas_quadrados(_linhas - 1, _colunas - 1);
-	this.mapa_quadrados_arestas = mapas[0];
-	this.mapa_arestas_quadrados = mapas[1];
+	this.mapa_arestas_quadrados = (typeof(_mapa_arestas_quadrados) == "undefined" || _mapa_arestas_quadrados == null) ? cria_mapa_arestas_quadrados(_linhas - 1, _colunas - 1) : _mapa_arestas_quadrados;
 }
 
 Tabuleiro.prototype.clone = function(){
-    return new Tabuleiro(this.linhas, this.colunas, this.marcadas, this.quadradosJogador, this.quadradosComputador);
+    return new Tabuleiro(this.linhas, this.colunas, this.marcadas, this.quadradosJogador, this.quadradosComputador, this.mapa_arestas_quadrados);
 }
 
 Tabuleiro.prototype.arestaMarcada = function(aresta){ // arestaMarcada(2) -> true ou false
@@ -155,7 +137,15 @@ Tabuleiro.prototype.getArestaQuadrados = function(aresta){ // getArestaQuadrados
  * @return Retorna uma lista das arestas que formam o quadrado (cordX, cordY) 
  */
 Tabuleiro.prototype.getQuadradoArestas = function(cordX, cordY){ // getQuadradoArestas(2,1) -> retornar [0,6,7,13]
-    return this.mapa_quadrados_arestas[chave_quadrado([cordX, cordY])];
+    var pulo = (2 * this.colunasQuadrados) + 1;
+    
+    var aresta_cima = pulo*cordY + cordX;
+    var aresta_dir = pulo*cordY + cordX + this.colunasQuadrados + 1;
+    var aresta_baixo = pulo*(cordY+1) + cordX;
+    var aresta_esq = pulo*cordY + cordX + this.colunasQuadrados;
+    var arestas = [aresta_cima, aresta_dir, aresta_baixo, aresta_esq];    
+    
+    return arestas;
 }
 
 Tabuleiro.prototype.quadradoEstaCompleto = function(cordX, cordY){
