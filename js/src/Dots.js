@@ -28,9 +28,28 @@ Dots.prototype.getHtmlVertice = function(first){
 	return this.getHtmlElemento("vertice", 0);
 }
 
+Dots.prototype.getHtmlPlacar = function(){
+    var placar_pc = this.tabuleiro.quadradosComputador.length;
+    var placar_jogador = this.tabuleiro.quadradosJogador.length;
+    var html = "Placar: pc " + placar_pc + " x " + placar_jogador + " jogador<br />";
+    if(placar_pc + placar_jogador == this.tabuleiro.linhasQuadrados * this.tabuleiro.colunasQuadrados){
+        var resultado = "<span class='empate'>Deu empate!</span>";
+        if(placar_pc != placar_jogador){
+            if(placar_pc < placar_jogador){
+                resultado = "<span class='vencedor'>Vencedor: jogador! :) </span>&nbsp;<span class='perdedor'>Perdedor: PC! :( </span>";
+            }
+            else{
+                resultado = "<span class='vencedor'>Vencedor: PC! :) </span>&nbsp;<span class='perdedor'>Perdedor: jogador! :( </span>";
+            }
+        }
+        html += "<b class='acabou'>ACABOU!</b>&nbsp;" + resultado + "</p><br />";
+    }
+    return html;
+}
+
 Dots.prototype.getHtmlMalha = function(){
 	var html = "<p>Malha " + this.tabuleiro.linhas + " x " + this.tabuleiro.colunas + " <br />";
-	html += "Placar: pc " + this.tabuleiro.quadradosComputador.length + " x " + this.tabuleiro.quadradosJogador.length + " jogador</p><br />";
+	html += this.getHtmlPlacar();
 	var linha = 1;
 	for(var i = 0; i < this.tabuleiro.linhas; i++){
 		if(i > 0){

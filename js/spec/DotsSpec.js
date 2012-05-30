@@ -10,9 +10,12 @@ describe("HTML na tela", function() {
 		expect(_html).not.toEqual("");
 	});
 
-	it("Contém linhas e colunas", function() {
+	it("Testa cabecalho da malha", function() {
 		var texto = _linhas + " x " + _colunas;
+		"Placar: pc " + placar_pc + " x " + placar_jogador + " jogador</p><br />";
+		var placar = _dots.tabuleiro.quadradosComputador.length  + " x " + _dots.tabuleiro.quadradosJogador.length;
 		expect(_html).toContain(texto);
+		expect(_html).toContain(placar);
 	});
 
 	it("Atualiza linhas e colunas", function() {
