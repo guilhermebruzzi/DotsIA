@@ -1,13 +1,20 @@
 function Agente(){
 	this.numeroNosProcessados = 0;
+	this.fila = Array();
+	this.acabarArvore = false;
+	this.alturaMaxima = -1;
 }
 
 Agente.prototype.MAXIMO_NOS_PROCESSAR = 50;
 
 Agente.prototype.jogadaComputador = function(tabuleiro){
 	this.numeroNosProcessados=0;
-	this.numeroNosProcessados++;
-	this.percorreArvore(tabuleiro, "computador", 0, 0, 0);
+	this.fila = Array();
+	this.fila.push({tabuleiro: tabuleiro, vez: "computador", computadorFechou: 0, jogadorFechou: 0, altura: 0, pai: -1});
+	this.numeroNosProcessados = 0;
+	this.acabarArvore = false;
+	this.alturaMaxima = -1;
+	this.percorreArvore();
 	console.log("acabou descida");
 	
 	/*for(var y = 0; y < tabuleiro.linhasQuadrados; y++){
@@ -24,11 +31,17 @@ Agente.prototype.jogadaComputador = function(tabuleiro){
 	return -1;
 }	
 
-Agente.prototype.percorreArvore = function(tabuleiro, vez, computadorFechou, jogadorFechou){
-	if (this.numeroNosProcessados > this.MAXIMO_NOS_PROCESSAR){
-		alert(computadorFechou+" "+jogadorFechou);
-		return;
-	}
+Agente.prototype.percorreArvore = function(){
+	this.numeroNosProcessados++;
+	var elemento = this.fila.shift();
+	var tabuleiro = elemento.tabuleiro;
+	var vez = elemento.vez;
+	var computadorFechou = elemento.computadorFechou;
+	var jogadorFechou = elemento.jogadorFechou;
+	var altura = elemento.altura;
+	var pai = elemento.pai;
+	var identificacao = this.numeroNosProcessados;
+	
 	var resposta = this.getCombinacoesTabuleiro(tabuleiro, vez, computadorFechou, jogadorFechou);
 	var prontaParaRecursao = Array();
 	var precisaMaisUmaRodada = Array();
@@ -52,18 +65,35 @@ Agente.prototype.percorreArvore = function(tabuleiro, vez, computadorFechou, jog
 			resposta = resposta.concat(respostaTemp);
 		}
 	}
-	for (var i=0;i<prontaParaRecursao.length;i++){
-		alert(prontaParaRecursao[i].tabuleiro.marcadas);
-		this.percorreArvore(prontaParaRecursao[i].tabuleiro, (vez=="computador")?"jogador":"computador", 
-				prontaParaRecursao[i].computadorFechou, prontaParaRecursao[i].jogadorFechou)
+	if (this.numeroNosProcessados+prontaParaRecursao.length > this.MAXIMO_NOS_PROCESSAR){
+		this.acabarArvore = true;
+		return;
+		
 	}
-	alert(computadorFechou+" "+jogadorFechou);
+	for (var i=0;i<prontaParaRecursao.length;i++){
+		this.fila.push({tabuleiro: prontaParaRecursao[i].tabuleiro, vez: (vez=="computador")?"jogador":"computador",
+				computadorFechou: prontaParaRecursao[i].computadorFechou, jogadorFechou: prontaParaRecursao[i].jogadorFechou, altura: altura+1, pai: identificacao});
+	}
+	while(this.fila.length!=0 && this.acabarArvore==false){this.percorreArvore();}
+	
+	if (this.alturaMaxima == -1){
+		this.alturaMaxima = altura;
+	}
+	if (altura == this.alturaMaxima){
+		alert("folha["+identificacao+"|"+pai+"] "+vez+" "+altura+" "+computadorFechou+" "+jogadorFechou+" "+tabuleiro.heuristica(vez));
+	}
+	else{
+		alert("["+identificacao+"|"+pai+"] "+vez+" "+altura);
+	}
+	return;
 }
 
 Agente.prototype.getCombinacoesTabuleiro = function(tabuleiro, vez, computadorFechou, jogadorFechou){
 	var resposta = Array();
 	for (var i=0;i<tabuleiro.linhasQuadrados;i++){
 		for(var j=0; j<tabuleiro.colunasQuadrados;j++){
+			var computadorFechouTemp = computadorFechou;
+			var jogadorFechouTemp = jogadorFechou;
 			var arestas = tabuleiro.getQuadradoArestas(j, i);
 			for (var aresta in arestas){
 				aresta = arestas[aresta];
@@ -75,13 +105,13 @@ Agente.prototype.getCombinacoesTabuleiro = function(tabuleiro, vez, computadorFe
 	                	quadrado = quadrados[quadrado];
 	                	if(tab.getNumArestasNaoMarcadas(quadrado[0], quadrado[1])==1){
 	                		fechouUltimaLinha = true;
-	                		if (vez=="computador"){ computadorFechou++; }
-	                		else{ jogadorFechou++; }
+	                		if (vez=="computador"){ computadorFechouTemp++; }
+	                		else{ jogadorFechouTemp++; }
 	                	}
 	                }
 					tab.marcaArestas(aresta, vez);
 					var elemento = {tabuleiro: tab, ultimaLinhaFechouQuadrado: fechouUltimaLinha, 
-							computadorFechou:computadorFechou, jogadorFechou: jogadorFechou};
+							computadorFechou:computadorFechouTemp, jogadorFechou: jogadorFechouTemp};
 					resposta.push(elemento);
 				}
 			}
