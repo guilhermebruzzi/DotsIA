@@ -1,0 +1,89 @@
+                                                                     
+                                                                     
+                                                                     
+                                             
+descemos na arvore salvando:
+   A - numero de quadrados que agente fechou (desconsiderando o que o agente ja havia fechado na configuração inicial)
+   J - numero de quadrados que jogador adversario fechou (desconsiderando o que jogador adversario ja havia fechado na configuração inicial)
+   SALDO = heuristica(tabuleiro, agente) // será passado o valor "agente" ou "jogador" dependendo de quem seria a vez de jogar
+   VALOR_NO = SALDO + A - J
+   
+// vez pode assumir valor "agente" ou "jogador"
+heuristica(tabuleiro, vez){
+	jogadaMacete = 0
+	quantosFechei = 0
+	enquanto (temMarcarQuartaLinha(tabuleiro)){
+		quadradoAdjacente = marcaQualquerQuartaLinha(tabuleiro)
+		quantosFechei++
+		tamanhoTubo = 1
+		vetorResposta = null
+		enquanto (podeFechar(quandradoAdjacente)){
+			vetorResposta = marcaQuartaLinha(tabuleiro, quadradoAdjacente) //retorna vetor: [quadrado adjacente, quantidade de quadrados que foram fechados simult. nessa jogada (1 ou 2)]
+			quadradoAdjacente = vetorResposta[0]
+			quantosFechei++
+			tamanhoTubo++
+		}
+		numeroQuadradosFecheiPorUltimoSimultaneamente = vetorResposta[1]
+		se (numeroQuadradosFecheiPorUltimoSimultaneamente == 1){
+			se (tamanhoTubo >= 2){
+				jogadaMacete = 2
+			}
+		}
+		se (numeroQuadradosFecheiPorUltimoSimultaneamente == 2){
+			quantosFechei++
+			tamanhoTubo++
+			se (tamanhoTubo >= 4 && jogadaMacete == 0){ // nao vale a pena mudar a jogadaMacete de 2 para 4, e se ja tiver valendo 4 nao precisamos mudar o valor de novo
+				jogadaMacete = 4
+			}
+		}
+	}
+	se (temMarcarPrimeiraOuSegundaLinha(tabuleiro)){
+		se (vez == agente){ retorna quantosFechei }
+		senao{ retorna -quantosFechei }
+	}
+	se (!temMarcarPrimeiraOuSegundaLinha(tabuleiro) && !temMarcarTerceiraLinha(tabuleiro) && !temMarcarQuartaLinha(tabuleiro)){ // tabuleiro acabou
+		se (vez == agente){ retorna quantosFechei }
+		senao{ retorna -quantosFechei }
+	}
+	marqueiTerceiraLinha = falso
+	vetorResposta2 = getQuadradoMenorTubo(tabuleiro) // retorna vetor: [um quadrado que pertença ao menor tubo, tamanho desse tubo]
+	quadrado = vetorResposta2[0]
+	quantidadeAdversarioFecharia = vetorResposta2[1]
+	se (jogadaMacete == 2){
+		se(quantidadeAdversarioFecharia > 2){
+			marqueiTerceiraLinha = verdadeiro
+			quantosFechei = quantosFechei - 2;
+			marcaTerceiraLinha(tabuleiro, quadrado)
+			x = heuristica(tabuleiro, vez)
+			se(vez == agente){ retorna quantosFechei - 2 + x}
+			senao{ retorna -quantosFechei + 2 + x }
+		}
+	}
+	se (jogadaMacete == 4){
+		se(quantidadeAdversarioFecharia > 4){
+			marqueiTerceiraLinha = verdadeiro
+			quantosFechei = quantosFechei - 4;
+			marcaTerceiraLinha(tabuleiro, quadrado)
+			x = heuristica(tabuleiro, vez)
+			se(vez == agente){ retorna quantosFechei - 4 + x }
+			senao{ retorna -quantosFechei + 4 + x }
+		}
+	}
+	se(!marqueiTerceiraLinha){
+		marcaTerceiraLinha(tabuleiro, quadrado)
+		x = heuristica(tabuleiro, !vez)
+		se (vez == agente){ retorna  quantosFechei + x}
+		senao{ retorna -quantosFechei + x}
+	}
+}
+
+FUNÇÕES A SEREM IMPLEMENTADAS:
+
+temMarcarPrimeiraOuSegundaLinha(tabuleiro) - retorna 1 se é possivel em algum lugar do tabuleiro marcar uma linha que seja a primeira ou segunda linha dos quadrados que essa linha influencia, retornar 0 caso contrario.
+temMarcarTerceiraLinha(tabuleiro) - retorna 1 se é possivel em algum lugar do tabuleiro marcar uma linha que seja a terceira linha de um dos quadrados que essa linha influencia, retornar 0 caso contrario.
+temMarcarQuartaLinha(tabuleiro) - retorna 1 se é possivel em algum lugar do tabuleiro marcar uma linha que seja a quarta linha de um dos quadrados que essa linha influencia, retornar 0 caso contrario.
+marcaTerceiraLinha(tabuleiro, quadrado) - marca terceira linha no quadrado que foi passado por parametro em qualquer uma das 2 arestas que sao possiveis
+marcaQualquerQuartaLinha(tabuleiro) - marca no tabuleiro qualquer uma linha que seja a quarta linha de um quadrado, e retorna o outro quadrado que essa linha tambem influencia. Caso essa linha nao influencie nenhum outro quadrado retorne null
+marcaQuartaLinha(tabuleiro, quadradoAdjacente) - marca no tabuleiro a quarta linha do quadradoAdjacente passado por parametro e retorna um vetor que contem: na primeira posição o outro quadrado que essa 4ª linha feita tambem influencia e na segunda posição a quantidade de quadrados simultaneamente fechados ao se fazer essa quarta linha (pode ser 1 ou 2)
+podeFechar(quandradoAdjacente) - retorna 1 se esse quadrado pode ser fechado com apenas mais uma linha, retornar 0 caso contrario. O parametro passado pode valer null, nesse caso retornar 0.
+getQuadradoMenorTubo(tabuleiro) - retorna um vetor que contem: na primeira posicao um quadrado que pertença ao menor tubo presente no tabuleiro, e na segunda posição o tamanho desse menor tubo
