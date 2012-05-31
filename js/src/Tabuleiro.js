@@ -78,7 +78,6 @@ Tabuleiro.prototype.clone = function(){
 			copy[attr] = this.mapa_arestas_quadrados[attr];
 		}
 	}
-	console.log(this.mapa_arestas_quadrados, copy);
     return new Tabuleiro(this.linhas, this.colunas, vetorMarcadas, vetorQuadradosJogador, vetorQuadradosAgente, copy);
 }
 
@@ -432,9 +431,91 @@ Tabuleiro.prototype.marcaQuartaLinha = function(cordX, cordY, player) {
                     }               
                }
             }            
-            this.marcaArestas(arestaAmarcar,player);
-        }                      
+        }   
+		this.marcaArestas(arestaAmarcar,player);
         return ret;
     }
     return null;    
+}
+
+Tabuleiro.prototype.heuristica = function(vez){
+	var tab = this.clone();
+	var jogadaMacete = 0;
+	var quantosFechei = 0;
+	while(tab.temMarcarQuartaLinha()){
+		var quadradoAdjacente = tab.marcaQualquerQuartaLinha();
+		quantosFechei++;
+		var tamanhoTubo = 1;
+		var qtdQuadradosFechadoSimultaneamente = 1;
+		if (quadradoAdjacente.length == 2){
+			if (tab.quadradoEstaCompleto(quadradoAdjacente[0], quadradoAdjacente[1])){
+				qtdQuadradosFechadoSimultaneamente = 2;
+			}
+		}
+		var vetorResposta = {quadradoInfluenciado: quadradoAdjacente, qtdFechadosSimultaneamente: qtdQuadradosFechadoSimultaneamente};
+		if (quadradoAdjacente.length == 2){
+			while(tab.podeFechar(quadradoAdjacente[0], quadradoAdjacente[1])){
+				vetorResposta = tab.marcaQuartaLinha(quadradoAdjacente[0], quadradoAdjacente[1], "jogador");
+				quantosFechei++;
+				tamanhoTubo++;
+				if (vetorResposta.quadradoInfluenciado!=undefined && vetorResposta.quadradoInfluenciado.length == 2){
+					quadradoAdjacente = vetorResposta.quadradoInfluenciado;
+				}
+				else{
+					break;
+				}
+			}
+		}
+		qtdQuadradosFechadoSimultaneamente = vetorResposta.qtdFechadosSimultaneamente;
+		if (qtdQuadradosFechadoSimultaneamente == 1){
+			if (tamanhoTubo >= 2){
+				jogadaMacete = 2;
+			}
+		}
+		if (qtdQuadradosFechadoSimultaneamente == 2){
+			quantosFechei++;
+			tamanhoTubo++;
+			if (tamanhoTubo >= 4 && jogadaMacete == 0){
+				jogadaMacete = 4;
+			}
+		}
+	}
+	if (tab.temMarcarPrimeiraOuSegundaLinha()){
+		if (vez == "computador"){ return quantosFechei; }
+		else{ return -quantosFechei; }
+	}
+	if (!tab.temMarcarPrimeiraOuSegundaLinha() && !tab.temMarcarTerceiraLinha() && !tab.temMarcarQuartaLinha()){
+		if (vez == "computador"){ return quantosFechei; }
+		else{ return -quantosFechei; }
+	}
+	var marqueiTerceiraLinha = false;
+	var vetorResposta2 = tab.getQuadradoMenorTubo();
+	var quadrado = vetorResposta2.quadradoMinimo;
+	var quantidadeAdversarioFecharia = vetorResposta2.tamanhoMinimo;
+	if (jogadaMacete == 2){
+		if (quantidadeAdversarioFecharia > 2){
+			marqueiTerceiraLinha = true;
+			quantosFechei = quantosFechei - 2;
+			tab.marcaTerceiraLinha(quadrado[0], quadrado[1], vez);
+			var x = tab.heuristica(vez);
+			if (vez == "computador"){ return quantosFechei - 2 + x; }
+			else{ return -quantosFechei + 2 + x; }
+		}
+	}
+	if (jogadaMacete == 4){
+		if (quantidadeAdversarioFecharia > 4){
+			marqueiTerceiraLinha = true;
+			quantosFechei = quantosFechei - 4;
+			tab.marcaTerceiraLinha(quadrado[0], quadrado[1], vez);
+			var x = tab.heuristica(vez);
+			if (vez == "computador"){ return quantosFechei - 4 + x; }
+			else{ return -quantosFechei + 4 + x; }
+		}
+	}
+	if (!marqueiTerceiraLinha){
+		tab.marcaTerceiraLinha(quadrado[0], quadrado[1], vez);
+		var x = tab.heuristica((vez=="jogador")?"computador":"jogador");
+		if (vez == "computador"){ return quantosFechei + x; }
+		else{ return -quantosFechei + x; }
+	}
 }
