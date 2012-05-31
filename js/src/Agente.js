@@ -1,20 +1,12 @@
 function Agente(){
-	this.numeroNosProcessados = 0;
-	this.fila = Array();
-	this.acabarArvore = false;
-	this.alturaMaxima = -1;
+	this.alturaMaxima = 4;
 }
 
 Agente.prototype.MAXIMO_NOS_PROCESSAR = 50;
 
 Agente.prototype.jogadaComputador = function(tabuleiro){
-	this.numeroNosProcessados=0;
-	this.fila = Array();
-	this.fila.push({tabuleiro: tabuleiro, vez: "computador", computadorFechou: 0, jogadorFechou: 0, altura: 0, pai: -1});
-	this.numeroNosProcessados = 0;
-	this.acabarArvore = false;
-	this.alturaMaxima = -1;
-	this.percorreArvore();
+	//this.fila.push({tabuleiro: tabuleiro, vez: "computador", computadorFechou: 0, jogadorFechou: 0, altura: 0, pai: -1});
+	this.percorreArvore({tabuleiro: tabuleiro, vez: "computador", computadorFechou: 0, jogadorFechou: 0, altura: 0});
 	console.log("acabou descida");
 	
 	/*for(var y = 0; y < tabuleiro.linhasQuadrados; y++){
@@ -31,16 +23,12 @@ Agente.prototype.jogadaComputador = function(tabuleiro){
 	return -1;
 }	
 
-Agente.prototype.percorreArvore = function(){
-	this.numeroNosProcessados++;
-	var elemento = this.fila.shift();
+Agente.prototype.percorreArvore = function(elemento){
 	var tabuleiro = elemento.tabuleiro;
 	var vez = elemento.vez;
 	var computadorFechou = elemento.computadorFechou;
 	var jogadorFechou = elemento.jogadorFechou;
 	var altura = elemento.altura;
-	var pai = elemento.pai;
-	var identificacao = this.numeroNosProcessados;
 	
 	var resposta = this.getCombinacoesTabuleiro(tabuleiro, vez, computadorFechou, jogadorFechou);
 	var prontaParaRecursao = Array();
@@ -65,26 +53,13 @@ Agente.prototype.percorreArvore = function(){
 			resposta = resposta.concat(respostaTemp);
 		}
 	}
-	if (this.numeroNosProcessados+prontaParaRecursao.length > this.MAXIMO_NOS_PROCESSAR){
-		this.acabarArvore = true;
-		return;
-		
+	if (altura+1<=this.alturaMaxima){
+		for (var i=0;i<prontaParaRecursao.length;i++){
+			this.percorreArvore({tabuleiro: prontaParaRecursao[i].tabuleiro, vez: (vez=="computador")?"jogador":"computador",
+					computadorFechou: prontaParaRecursao[i].computadorFechou, jogadorFechou: prontaParaRecursao[i].jogadorFechou, altura: altura+1});
+		}
 	}
-	for (var i=0;i<prontaParaRecursao.length;i++){
-		this.fila.push({tabuleiro: prontaParaRecursao[i].tabuleiro, vez: (vez=="computador")?"jogador":"computador",
-				computadorFechou: prontaParaRecursao[i].computadorFechou, jogadorFechou: prontaParaRecursao[i].jogadorFechou, altura: altura+1, pai: identificacao});
-	}
-	while(this.fila.length!=0 && this.acabarArvore==false){this.percorreArvore();}
-	
-	if (this.alturaMaxima == -1){
-		this.alturaMaxima = altura;
-	}
-	if (altura == this.alturaMaxima){
-		alert("folha["+identificacao+"|"+pai+"] "+vez+" "+altura+" "+computadorFechou+" "+jogadorFechou+" "+tabuleiro.heuristica(vez));
-	}
-	else{
-		alert("["+identificacao+"|"+pai+"] "+vez+" "+altura);
-	}
+	alert("altura:"+altura+" vez:"+vez+" marcadas:"+tabuleiro.marcadas);
 	return;
 }
 
