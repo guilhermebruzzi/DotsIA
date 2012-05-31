@@ -519,3 +519,15 @@ Tabuleiro.prototype.heuristica = function(vez){
 		else{ return -quantosFechei + x; }
 	}
 }
+
+Tabuleiro.prototype.getNumArestasNaoMarcadas = function(coordX, coordY){
+	var arestas = this.getQuadradoArestas(coordX, coordY);
+	var cont = 0;
+	for (var aresta in arestas){
+		aresta = arestas[aresta];
+		if (!this.arestaMarcada(aresta)){
+			cont++;
+		}
+	}
+	return cont;
+}
