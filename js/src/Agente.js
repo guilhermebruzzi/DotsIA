@@ -2,8 +2,6 @@ function Agente(){
 	this.alturaMaxima = 2;
 }
 
-Agente.prototype.MAXIMO_NOS_PROCESSAR = 50;
-
 Agente.prototype.jogadaComputador = function(tabuleiro){
 	var aresta = this.percorreArvore({tabuleiro: tabuleiro, vez: "computador", computadorFechou: 0, jogadorFechou: 0, altura: 0});
 	return aresta;
@@ -18,9 +16,8 @@ Agente.prototype.percorreArvore = function(elemento){
 	
 	var resposta = this.getCombinacoesTabuleiro(tabuleiro, vezTemp, computadorFechou, jogadorFechou);
 	var prontaParaRecursao = Array();
-	var precisaMaisUmaRodada = Array();
 	while(true){
-		precisaMaisUmaRodada = Array();
+		var precisaMaisUmaRodada = Array();
 		for (var elemento in resposta){
 			elemento = resposta[elemento];
 			if (elemento.ultimaLinhaFechouQuadrado == false){
@@ -29,7 +26,7 @@ Agente.prototype.percorreArvore = function(elemento){
 			else{
 				precisaMaisUmaRodada.push(elemento);
 			}
-		}	
+		}
 		if (precisaMaisUmaRodada.length == 0){
 			break;
 		}
@@ -108,9 +105,12 @@ Agente.prototype.getCombinacoesTabuleiro = function(tabuleiro, vezTemp, computad
 	                	}
 	                }
 					tab.marcaArestas(aresta, vezTemp);
-					if (!tab.temMarcarQuartaLinha() && !tab.temMarcarTerceiraLinha() && !tab.temMarcarPrimeiraOuSegundaLinha()){
-            			fechouUltimaLinha = false;
-            		}
+					var placar_pc = this.tabuleiro.quadradosComputador.length;
+				    var placar_jogador = this.tabuleiro.quadradosJogador.length;
+				    var html = "Placar: pc " + placar_pc + " x " + placar_jogador + " jogador<br />";
+				    if(tab.quadradosComputador.length + tab.quadradosJogador.length == tab.linhasQuadrados * tab.colunasQuadrados){
+				    	fechouUltimaLinha = false;
+				    }
 					var elemento = {tabuleiro: tab, ultimaLinhaFechouQuadrado: fechouUltimaLinha, 
 							computadorFechou:computadorFechouTemp, jogadorFechou: jogadorFechouTemp};
 					resposta.push(elemento);
