@@ -442,6 +442,7 @@ Tabuleiro.prototype.heuristica = function(vez){
 	var tab = this.clone();
 	var jogadaMacete = 0;
 	var quantosFechei = 0;
+
 	while(tab.temMarcarQuartaLinha()){
 		var quadradoAdjacente = tab.marcaQualquerQuartaLinha();
 		quantosFechei++;
