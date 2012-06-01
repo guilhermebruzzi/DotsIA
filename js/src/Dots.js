@@ -144,7 +144,6 @@ $(document).ready(function(){
 		}
 		while(vez == "computador"){
 		    dots.agenteJoga();
-			//vez = "jogador";
 		}
 	});
 
