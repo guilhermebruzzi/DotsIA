@@ -76,19 +76,26 @@ Dots.prototype.atualizaMalha = function(){
 	$("#malha").html(this.getHtmlMalha());
 }
 
+Dots.prototype.trocaVez = function(){
+    if(vez == "computador"){ // Terminou de executar o pc
+        vez = "jogador";
+    }
+    else{  // Terminou de jogar o jogador
+        vez = "computador";
+    }
+}
+
 Dots.prototype.jogadorJoga = function(jogadaPessoa){
     jogadaPessoa--;
 	this.tabuleiro.marcaArestas(jogadaPessoa, "jogador");
-	this.atualizaMalha();
+    this.trocaVez();
+    this.atualizaMalha();
 }
 
 Dots.prototype.agenteJoga = function(){
 	var jogadaComputador = this.agente.jogadaComputador(this.tabuleiro.clone());
-	if (jogadaComputador == -1){
-		vez = "jogador";
-		return;
-	}
 	this.tabuleiro.marcaArestas(jogadaComputador, "computador");
+	this.trocaVez();
 	this.atualizaMalha();
 }
 

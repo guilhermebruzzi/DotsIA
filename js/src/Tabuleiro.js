@@ -102,6 +102,9 @@ Tabuleiro.prototype.marcaArestas = function(arestas, player){ // marcaAresta([1,
     }
     while(arestas.length > 0){
         var aresta = arestas.pop();
+        if (this.arestaMarcada(aresta)){
+            continue;
+        }
         this.marca(this.marcadas, aresta);
         var quadrados = [];
         var quadradosDaAresta = this.getArestaQuadrados(aresta);
@@ -115,20 +118,14 @@ Tabuleiro.prototype.marcaArestas = function(arestas, player){ // marcaAresta([1,
         if(quadrados.length > 0){ // Continuar com uma aresta aleat√≥ria
             if(player == "computador"){
                 this.addQuadradosComputador(quadrados);
-				return; // Computador continua a jogar
+				return;
             }
             else{
                 this.addQuadradosJogador(quadrados);
-                vez = "jogador";
-                return; // Jogador continua a jogar
+                vez = "computador";
+                return; // Jogador continua a jogar, j· que vai ser trocado a vez
             }
         }
-    }
-    if(vez == "computador"){ // Terminou de executar o pc
-        vez = "jogador";
-    }
-    else{  // Terminou de jogar o jogador
-        vez = "computador";
     }
 }
 
