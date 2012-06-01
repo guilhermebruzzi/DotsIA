@@ -98,28 +98,34 @@ Agente.prototype.percorreArvore = function(elemento){
 
 Agente.prototype.getCombinacoesTabuleiro = function(tabuleiro, vezTemp, computadorFechou, jogadorFechou){
 	var resposta = Array();
-    for (var aresta = 0; aresta <= tabuleiro.linhasQuadrados * tabuleiro.colunasQuadrados; aresta++){
-		var computadorFechouTemp = computadorFechou;
-		var jogadorFechouTemp = jogadorFechou;
-		if(!tabuleiro.arestaMarcada(aresta)){
-			var fechouUltimaLinha = false;
-			var tab = tabuleiro.clone();
-			var quadrados = tab.getArestaQuadrados(aresta);
-			for (var quadrado in quadrados){
-            	quadrado = quadrados[quadrado];
-            	if(tab.getNumArestasNaoMarcadas(quadrado[0], quadrado[1])==1){
-            		fechouUltimaLinha = true;
-            		if (vezTemp=="computador"){ computadorFechouTemp++; }
-            		else{ jogadorFechouTemp++; }
-            	}
-            }
-			tab.marcaArestas(aresta, vezTemp);
-		    if(tab.quadradosComputador.length + tab.quadradosJogador.length == tab.linhasQuadrados * tab.colunasQuadrados){
-		    	fechouUltimaLinha = false;
-		    }
-			var elemento = {tabuleiro: tab, ultimaLinhaFechouQuadrado: fechouUltimaLinha, 
-					computadorFechou:computadorFechouTemp, jogadorFechou: jogadorFechouTemp};
-			resposta.push(elemento);
+	for (var i=0;i<tabuleiro.linhasQuadrados;i++){
+		for(var j=0; j<tabuleiro.colunasQuadrados;j++){
+			var computadorFechouTemp = computadorFechou;
+			var jogadorFechouTemp = jogadorFechou;
+			var arestas = tabuleiro.getQuadradoArestas(j, i);
+			for (var aresta in arestas){
+				aresta = arestas[aresta];
+				if(!tabuleiro.arestaMarcada(aresta)){
+					var fechouUltimaLinha = false;
+					var tab = tabuleiro.clone();
+					var quadrados = tab.getArestaQuadrados(aresta);
+					for (var quadrado in quadrados){
+	                	quadrado = quadrados[quadrado];
+	                	if(tab.getNumArestasNaoMarcadas(quadrado[0], quadrado[1])==1){
+	                		fechouUltimaLinha = true;
+	                		if (vezTemp=="computador"){ computadorFechouTemp++; }
+	                		else{ jogadorFechouTemp++; }
+	                	}
+	                }
+					tab.marcaArestas(aresta, vezTemp);
+				    if(tab.quadradosComputador.length + tab.quadradosJogador.length == tab.linhasQuadrados * tab.colunasQuadrados){
+				    	fechouUltimaLinha = false;
+				    }
+					var elemento = {tabuleiro: tab, ultimaLinhaFechouQuadrado: fechouUltimaLinha, 
+							computadorFechou:computadorFechouTemp, jogadorFechou: jogadorFechouTemp};
+					resposta.push(elemento);
+				}
+			}
 		}
 	}
 	return resposta;
