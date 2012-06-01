@@ -118,12 +118,9 @@ Tabuleiro.prototype.marcaArestas = function(arestas, player){ // marcaAresta([1,
         if(quadrados.length > 0){ // Continuar com uma aresta aleat√≥ria
             if(player == "computador"){
                 this.addQuadradosComputador(quadrados);
-				return;
             }
             else{
                 this.addQuadradosJogador(quadrados);
-                vez = "computador";
-                return; // Jogador continua a jogar, j· que vai ser trocado a vez
             }
         }
     }

@@ -87,8 +87,12 @@ Dots.prototype.trocaVez = function(){
 
 Dots.prototype.jogadorJoga = function(jogadaPessoa){
     jogadaPessoa--;
+    var placar_jogador_antes = this.tabuleiro.quadradosJogador.length;
 	this.tabuleiro.marcaArestas(jogadaPessoa, "jogador");
-    this.trocaVez();
+    var placar_jogador_depois = this.tabuleiro.quadradosJogador.length;
+    if(placar_jogador_antes == placar_jogador_depois){ // Jogador não marcou quadrados
+        this.trocaVez();
+    }
     this.atualizaMalha();
 }
 
