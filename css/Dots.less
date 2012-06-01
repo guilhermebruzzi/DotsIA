@@ -13,10 +13,60 @@ body{
 @cor_linha_marcado: rgb(200,0,50);
 
 
+#principal{
+	height: 100%;
+	width: 90%;
+	position: relative;
+}
+
 #malha{
 	border: 1px solid black;
-	width: 800px;
-	height: 600px;
+	min-width: 800px;
+	width: 100%;
+	min-height: 600px;
+	height: 100%;
+}
+
+.malha-escrita{
+	margin: 26px 170px;
+}
+
+.resultado-tabuleiro{
+	margin: 26px 170px;
+	height: 60px;
+}
+
+#malha-quadrados{
+	left: 171px;
+    position: absolute;
+    top: 159px;
+    z-index: -1;
+}
+
+.fundo-quadrado{
+	width: @tam_linha;
+	height: @tam_linha;
+	float: left;
+	position: relative;
+	-webkit-border-radius: 4px;
+	border-radius: 4px; 
+	margin-left: @tam_bola;
+	margin-top: @tam_bola;
+	background-color: white;
+}
+
+.fundo-quadrado p{
+    left: 11px;
+    position: absolute;
+    top: -6px;
+}
+
+.fundo-quadrado-pc{
+	background-color: orange;
+}
+
+.fundo-quadrado-jogador{
+	background-color: #4DD2FA;
 }
 
 small.erro{
