@@ -126,8 +126,12 @@ Tabuleiro.prototype.marcaArestas = function(arestas, player){ // marcaAresta([1,
     }
 }
 
+Tabuleiro.prototype.getNumMaxArestas = function(){
+    return (2 * this.linhas * this.colunas) - this.linhas - this.colunas;
+}
+
 Tabuleiro.prototype.getNumArestasLivres = function(){
-    return (2 * this.linhas * this.colunas) - this.linhas - this.colunas this.marcadas.length;
+    return this.getNumMaxArestas() - this.marcadas.length;
 }
 
 Tabuleiro.prototype.addQuadradosJogador = function(novosQuadrados){

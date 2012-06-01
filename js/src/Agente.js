@@ -98,7 +98,9 @@ Agente.prototype.percorreArvore = function(elemento){
 
 Agente.prototype.getCombinacoesTabuleiro = function(tabuleiro, vezTemp, computadorFechou, jogadorFechou){
 	var resposta = Array();
-	for (var aresta = 0; aresta <= tabuleiro.linhasQuadrados * tabuleiro.colunasQuadrados; aresta++){
+    for (var aresta = 0; aresta <= tabuleiro.linhasQuadrados * tabuleiro.colunasQuadrados; aresta++){
+		var computadorFechouTemp = computadorFechou;
+		var jogadorFechouTemp = jogadorFechou;
 		if(!tabuleiro.arestaMarcada(aresta)){
 			var fechouUltimaLinha = false;
 			var tab = tabuleiro.clone();
