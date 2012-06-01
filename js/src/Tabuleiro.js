@@ -57,28 +57,13 @@ function Tabuleiro(_linhas, _colunas, _marcadas, _quadradosJogador, _quadradosCo
 }
 
 Tabuleiro.prototype.clone = function(){
-	var vetorQuadradosJogador = [];
-	for (var quadrado in this.quadradosJogador){
-		quadrado = this.quadradosJogador[quadrado];
-		vetorQuadradosJogador.push(quadrado);
-	}
-	var vetorQuadradosAgente = [];
-	for (var quadrado in this.quadradosComputador){
-		quadrado = this.quadradosComputador[quadrado];
-		vetorQuadradosAgente.push(quadrado);
-	}
-	var vetorMarcadas = [];
-	for (var aresta in this.marcadas){
-		aresta = this.marcadas[aresta];
-		vetorMarcadas.push(aresta);
-	}
 	var copy = {};
 	for (var attr in this.mapa_arestas_quadrados){
 		if (this.mapa_arestas_quadrados.hasOwnProperty(attr)){
 			copy[attr] = this.mapa_arestas_quadrados[attr];
 		}
 	}
-    return new Tabuleiro(this.linhas, this.colunas, vetorMarcadas, vetorQuadradosJogador, vetorQuadradosAgente, copy);
+    return new Tabuleiro(this.linhas, this.colunas, this.marcadas.slice(0), this.quadradosJogador.slice(0), this.quadradosComputador.slice(0), copy);
 }
 
 Tabuleiro.prototype.arestaMarcada = function(aresta){ // arestaMarcada(2) -> true ou false
