@@ -4,7 +4,7 @@ function diff_array(arr1, arr2){
 
 function Agente(){
 	this.alturaMaxima = 0;
-	this.nosMaximos = 4000;
+	this.nosMaximos = 1000;
 	this.tabuleirosVistos = {};
 }
 
@@ -42,14 +42,13 @@ Agente.prototype.jogadaComputador = function(tabuleiro){
 	if(this.alturaMaxima < 2){
 		this.alturaMaxima = 2;
 	}
-	//alert(this.alturaMaxima);
 
-	var tabuleiroNovo = this.percorreArvore({tabuleiro: tabuleiro, vez: "computador", computadorFechou: 0, jogadorFechou: 0, altura: 0});
+	var tabuleiroNovo = this.percorreArvore({tabuleiro: tabuleiro, vez: "computador", computadorFechou: 0, jogadorFechou: 0, altura: 0}, null, null);
 	tabuleiroNovo = tabuleiroNovo.tabuleiro;
 	return diff_array(tabuleiroNovo.marcadas, tabuleiro.marcadas);
 }	
 
-Agente.prototype.percorreArvore = function(elemento){
+Agente.prototype.percorreArvore = function(elemento, alfa, beta){
 	var tabuleiro = elemento.tabuleiro;
 	var vezTemp = elemento.vez;
 	var computadorFechou = elemento.computadorFechou;
@@ -91,29 +90,52 @@ Agente.prototype.percorreArvore = function(elemento){
 				}
 				else{
 					retorno = this.percorreArvore({tabuleiro: prontaParaRecursao[i].tabuleiro.clone(), vez: (vezTemp=="computador")?"jogador":"computador",
-							computadorFechou: prontaParaRecursao[i].computadorFechou, jogadorFechou: prontaParaRecursao[i].jogadorFechou, altura: altura+1});
+							computadorFechou: prontaParaRecursao[i].computadorFechou, jogadorFechou: prontaParaRecursao[i].jogadorFechou, altura: altura+1}, alfa, beta);
 					this.setTabuleirosVistos(prontaParaRecursao[i].tabuleiro, retorno);
 				}
 				var saldoNovo = retorno.saldo;
-				if (vezTemp=="computador"){
+				if (vezTemp == "computador"){ /*Max*/
 					if (saldoNovo > saldoRetorno){
 						saldoRetorno = saldoNovo;
 						tabuleiroRetorno = prontaParaRecursao[i].tabuleiro;
 					}
+					if(alfa === null || saldoNovo > alfa){ /*Maximizando alfa*/
+						alfa = saldoNovo;
+					}
+					if(alfa !== null && beta !== null){
+						if(beta < alfa){
+							return retorno;
+						}
+					}
 				}
-				else{
+				else{  /*Min*/
 					if (saldoNovo < saldoRetorno){
 						saldoRetorno = saldoNovo;
 						tabuleiroRetorno = prontaParaRecursao[i].tabuleiro;
 					}
+					if(beta === null || saldoNovo < beta){ /*Minimizando beta*/
+						beta = saldoNovo;
+					}
+					if(alfa !== null && beta !== null){
+						if(beta < alfa){
+							return retorno;
+						}
+					}
 				}
 			}
+			/*Caso nó*/
 			var retornoFinal = {saldo:saldoRetorno, tabuleiro: tabuleiroRetorno};
 			return retornoFinal;
 		}
 	}
 	
 	/*Caso folha*/
+	if (vezTemp=="computador"){ /*Max*/
+
+	}
+	else{ /*Min*/
+
+	}
 	var saldo = computadorFechou - jogadorFechou + tabuleiro.heuristica(vezTemp);
 	var retornoFinal = {saldo:saldo, tabuleiro: tabuleiro};
 	return retornoFinal;
