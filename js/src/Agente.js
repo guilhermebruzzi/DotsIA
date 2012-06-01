@@ -105,9 +105,6 @@ Agente.prototype.getCombinacoesTabuleiro = function(tabuleiro, vezTemp, computad
 	                	}
 	                }
 					tab.marcaArestas(aresta, vezTemp);
-					var placar_pc = this.tabuleiro.quadradosComputador.length;
-				    var placar_jogador = this.tabuleiro.quadradosJogador.length;
-				    var html = "Placar: pc " + placar_pc + " x " + placar_jogador + " jogador<br />";
 				    if(tab.quadradosComputador.length + tab.quadradosJogador.length == tab.linhasQuadrados * tab.colunasQuadrados){
 				    	fechouUltimaLinha = false;
 				    }
